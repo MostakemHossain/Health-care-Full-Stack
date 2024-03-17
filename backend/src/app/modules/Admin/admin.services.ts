@@ -1,8 +1,7 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import prisma from "../../../Shared/prisma";
 import { paginationHelper } from "../../../healpers/paginationHelper";
 import { adminSearchAbleFields } from "./admin.constants";
-
-const prisma = new PrismaClient();
 
 const getAllAdminFromDb = async (params: any, options: any) => {
   const { limit, page, skip, sortBy, sortOrder } =

@@ -12,7 +12,7 @@ type IoptionsResult = {
   sortOrder: string;
   sortBy: string;
 };
-const calculatePagination = (options: Ioptions): Ioptions => {
+const calculatePagination = (options: Ioptions): IoptionsResult => {
   const page: number = Number(options.page) || 1;
   const limit: number = Number(options.limit) || 10;
   const skip: number = Number(page - 1) * limit;
