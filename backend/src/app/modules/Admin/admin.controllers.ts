@@ -3,6 +3,7 @@ import pick from "../../../Shared/pick";
 import { adminFilterableFields } from "./admin.constants";
 import { adminServices } from "./admin.services";
 import sendResponse from "../../../healpers/sendResponse";
+import httpStatus from "http-status";
 
 
 
@@ -15,7 +16,7 @@ const getAllAdminFromDB = async (req: Request, res: Response) => {
 
     const result = await adminServices.getAllAdminFromDb(filter, options);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admins fetched Successfully",
       meta: result.meta,
@@ -35,7 +36,7 @@ const getSingleAdminFromDb = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.getSingleAdminFromDb(id);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin fetched Successfully by Id",
       data: result,
@@ -54,7 +55,7 @@ const updateAdminIntoDb = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.updateAdminIntoDb(id, req.body);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin updated Successfully",
       data: result,
@@ -74,7 +75,7 @@ const deleteAdminFromDb = async (req: Request, res: Response) => {
     const result = await adminServices.deleteAdminFromDb(id);
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin deleted Successfully",
       data: result,
@@ -93,7 +94,7 @@ const softDeleteAdminFromDb = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.softDeleteAdminFromDb(id);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin deleted Successfully",
       data: result,
