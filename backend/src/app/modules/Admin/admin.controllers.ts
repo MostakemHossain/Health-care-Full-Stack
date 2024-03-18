@@ -28,7 +28,7 @@ const getAllAdminFromDB = async (req: Request, res: Response) => {
 
 const getSingleAdminFromDb = async (req: Request, res: Response) => {
   try {
-   const {id}= req.params
+    const { id } = req.params;
     const result = await adminServices.getSingleAdminFromDb(id);
 
     res.status(200).json({
@@ -45,7 +45,27 @@ const getSingleAdminFromDb = async (req: Request, res: Response) => {
   }
 };
 
+const updateAdminIntoDb = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await adminServices.updateAdminIntoDb(id, req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin updated Successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.name || "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const adminControllers = {
   getAllAdminFromDB,
   getSingleAdminFromDb,
+  updateAdminIntoDb,
 };
