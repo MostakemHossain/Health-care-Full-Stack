@@ -3,6 +3,7 @@ import { adminControllers } from "./admin.controllers";
 
 const router = express.Router();
 
-router.get("/", adminControllers.getAddAdminFromDB);
+router.get("/", adminControllers.getAllAdminFromDB);
+router.get("/:id", adminControllers.getSingleAdminFromDb);
 
 export const adminRoutes = router;
