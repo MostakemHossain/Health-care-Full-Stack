@@ -1,9 +1,14 @@
 import { Admin, Prisma, UserStatus } from "@prisma/client";
 import prisma from "../../../Shared/prisma";
 import { paginationHelper } from "../../../healpers/paginationHelper";
+import { IPaginationOptions } from "../../interface/pagination";
 import { adminSearchAbleFields } from "./admin.constants";
+import { IAdminFilterRequest } from "./admin.interface";
 
-const getAllAdminFromDb = async (params: any, options: any) => {
+const getAllAdminFromDb = async (
+  params: IAdminFilterRequest,
+  options: IPaginationOptions
+) => {
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = params;
@@ -39,7 +44,7 @@ const getAllAdminFromDb = async (params: any, options: any) => {
     andConditions.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: {
-          equals: filterData[key],
+          equals: (filterData as any)[key],
         },
       })),
     });
@@ -146,7 +151,7 @@ const softDeleteAdminFromDb = async (id: string): Promise<Admin | null> => {
       },
     });
 
-     await transactionsClient.user.update({
+    await transactionsClient.user.update({
       where: {
         email: adminDeletedData.email,
       },
