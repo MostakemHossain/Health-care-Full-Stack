@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import prisma from "../../../Shared/prisma";
+import { jwtHealpers } from "../../../healpers/jwtHealpers";
 import { IUserLogin } from "./auth.interface";
 
 const loginUser = async (payload: IUserLogin) => {
@@ -16,28 +16,22 @@ const loginUser = async (payload: IUserLogin) => {
     throw new Error("invalid credentials");
   }
 
-  const accessToken = jwt.sign(
+  const accessToken = jwtHealpers.generateToken(
     {
       email: userData.email,
       role: userData.role,
     },
     process.env.ACCESS_SERECT_KEY as string,
-    {
-      algorithm: "HS256",
-      expiresIn: "5m",
-    }
+    "5m"
   );
 
-  const refreshToken = jwt.sign(
+  const refreshToken = jwtHealpers.generateToken(
     {
       email: userData.email,
       role: userData.role,
     },
     process.env.REFRESH_SERECT_KEY as string,
-    {
-      algorithm: "HS256",
-      expiresIn: "30d",
-    }
+    "30d"
   );
 
   return {
