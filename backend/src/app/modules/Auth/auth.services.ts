@@ -1,6 +1,7 @@
 import { UserStatus } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../../Shared/prisma";
+import config from "../../../config";
 import { jwtHealpers } from "../../../healpers/jwtHealpers";
 import { IUserLogin } from "./auth.interface";
 
@@ -22,8 +23,8 @@ const loginUser = async (payload: IUserLogin) => {
       email: userData.email,
       role: userData.role,
     },
-    process.env.ACCESS_SERECT_KEY as string,
-    "5m"
+    config.jwt.jwt_access_token_serect as string,
+    config.jwt.jwt_access_token_expires_in as string
   );
 
   const refreshToken = jwtHealpers.generateToken(
@@ -31,8 +32,8 @@ const loginUser = async (payload: IUserLogin) => {
       email: userData.email,
       role: userData.role,
     },
-    process.env.REFRESH_SERECT_KEY as string,
-    "30d"
+    config.jwt.jwt_refresh_token_serect as string,
+    config.jwt.jwt_refresh_token_expires_in as string
   );
 
   return {
@@ -47,7 +48,7 @@ const refreshToken = async (token: string) => {
   try {
     decodedToken = jwtHealpers.verifyToken(
       token,
-      process.env.REFRESH_SERECT_KEY as string
+      config.jwt.jwt_refresh_token_serect as string
     );
   } catch (err) {
     throw new Error("invalid credentials");
@@ -65,8 +66,8 @@ const refreshToken = async (token: string) => {
       email: userData.email,
       role: userData.role,
     },
-    process.env.ACCESS_SERECT_KEY as string,
-    "5m"
+    config.jwt.jwt_access_token_serect as string,
+    config.jwt.jwt_access_token_expires_in as string
   );
   return {
     accessToken,
