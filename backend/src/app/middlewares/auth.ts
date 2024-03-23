@@ -15,6 +15,7 @@ const auth = (...roles: string[]) => {
         token,
         config.jwt.jwt_access_token_serect as string
       );
+      req.user = verifyUser;
       if (!roles.length && roles.includes(verifyUser.role)) {
         throw new AppError(httpStatus.FORBIDDEN, "Forbidden!");
       }
