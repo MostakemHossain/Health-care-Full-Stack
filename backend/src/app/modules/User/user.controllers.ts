@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
+import httpStatus from "http-status";
 import CatchAsync from "../../../Shared/CatchAsync";
+import pick from "../../../Shared/pick";
 import sendResponse from "../../../healpers/sendResponse";
+import { userFilterableFields } from "./user.constant";
 import { userServices } from "./user.services";
 const createAdmin = CatchAsync(async (req: Request, res: Response) => {
   const result = await userServices.createAdmin(req);
@@ -30,8 +33,25 @@ const createPatient = CatchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllFromDB = CatchAsync(async (req: Request, res: Response) => {
+  pick(req.query, userFilterableFields);
+
+  const filter = pick(req.query, userFilterableFields);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+
+  const result = await userServices.getAllFromDb(filter, options);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "All Users fetched Successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
 export const userControllers = {
   createAdmin,
   createDoctor,
   createPatient,
+  getAllFromDB,
 };
