@@ -1,7 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 import multer from "multer";
 import path from "path";
-import fs from "fs"
+import { ICloudinaryResponse, IFile } from "../app/interface/file";
 
 cloudinary.config({
   cloud_name: "dthgwxcvc",
@@ -20,12 +21,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const uploadToCloudinary = async (file: any) => {
+const uploadToCloudinary = async (
+  file: IFile
+): Promise<ICloudinaryResponse | undefined> => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       file.path,
-      { public_id: file.originalname },
-      (error, result) => {
+      //   { public_id: file.originalname },
+      (error: Error, result: ICloudinaryResponse) => {
         fs.unlinkSync(file.path); // delete the local copy of the image
         if (error) {
           reject(error);
