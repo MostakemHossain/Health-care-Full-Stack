@@ -6,7 +6,11 @@ import { userControllers } from "./user.controllers";
 import { userValidation } from "./user.validation";
 const router = express.Router();
 
-router.get("/", userControllers.getAllFromDB);
+router.get(
+  "/",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.getAllFromDB
+);
 
 router.post(
   "/create-admin",
@@ -35,4 +39,9 @@ router.post(
   }
 );
 
+router.patch(
+  "/:id/status",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.changeProfileStatus
+);
 export const UserRoutes = router;
