@@ -32,6 +32,35 @@ const createAdmin = async (payload: any) => {
 
   return result;
 };
+const createDoctor = async (payload: any) => {
+  const file: IFile = payload.file;
+
+  if (file) {
+    const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+
+    payload.body.doctor.profilePhoto = uploadToCloudinary?.secure_url;
+  }
+  const hashedPassword: string = await bcrypt.hash(payload.body.password, 10);
+  const userData = {
+    email: payload.body.doctor.email,
+    password: hashedPassword,
+    role: UserRole.DOCTOR,
+  };
+
+  const result = await prisma.$transaction(async (transitionClient) => {
+    await transitionClient.user.create({
+      data: userData,
+    });
+    const createDoctorData = await transitionClient.doctor.create({
+      data: payload.body.doctor,
+    });
+
+    return createDoctorData;
+  });
+
+  return result;
+};
 export const userServices = {
   createAdmin,
+  createDoctor,
 };

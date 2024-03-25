@@ -18,7 +18,25 @@ const createAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+const createDoctor = async (req: Request, res: Response) => {
+  try {
+    const result = await userServices.createDoctor(req);
+    sendResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: "Doctor Created Successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.name || "Something went wrong",
+      error: err,
+    });
+  }
+};
 
 export const userControllers = {
   createAdmin,
+  createDoctor,
 };
