@@ -3,7 +3,7 @@ import sendResponse from "../../../healpers/sendResponse";
 import { userServices } from "./user.services";
 const createAdmin = async (req: Request, res: Response) => {
   try {
-    const result = await userServices.createAdmin(req.body);
+    const result = await userServices.createAdmin(req);
     sendResponse(res, {
       statusCode: 201,
       success: true,
