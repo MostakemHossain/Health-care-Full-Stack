@@ -15,7 +15,29 @@ const createSpecialties = async (req: Request) => {
   });
   return result;
 };
+const getAllSpeciaities = async () => {
+  const result = await prisma.specialties.findMany();
+  return result;
+};
+const getSingleSpeciaities = async (id: string) => {
+  const result = await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+const deleteSpeciaities = async (id: string) => {
+  await prisma.specialties.delete({
+    where: {
+      id,
+    },
+  });
+};
 
 export const SpecialtiesService = {
   createSpecialties,
+  getAllSpeciaities,
+  getSingleSpeciaities,
+  deleteSpeciaities,
 };

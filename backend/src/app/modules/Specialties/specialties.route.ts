@@ -16,3 +16,6 @@ router.post(
     return SpecialtiesController.createSpecialties(req, res, next);
   }
 );
+router.get("/", SpecialtiesController.getAllSpeciaities);
+router.get("/:id", SpecialtiesController.getSingleSpeciaities);
+router.delete("/:id", SpecialtiesController.deleteSpeciaities);
