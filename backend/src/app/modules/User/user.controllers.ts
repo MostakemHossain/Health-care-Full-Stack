@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import CatchAsync from "../../../Shared/CatchAsync";
 import pick from "../../../Shared/pick";
 import sendResponse from "../../../healpers/sendResponse";
+import { IAuthUser } from "../../interface/common";
 import { userFilterableFields } from "./user.constant";
 import { userServices } from "./user.services";
 const createAdmin = CatchAsync(async (req: Request, res: Response) => {
@@ -59,16 +60,30 @@ const changeProfileStatus = CatchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const getMyProfile = CatchAsync(async (req: Request, res: Response) => {
-  const user = req.user;
-  const result = await userServices.getMyProfile(user);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "My profile data fetched",
-    data: result,
-  });
-});
+const getMyProfile = CatchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await userServices.getMyProfile(user as IAuthUser);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "My profile data fetched",
+      data: result,
+    });
+  }
+);
+const updateMyProfile = CatchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await userServices.updateMyProfile(user as IAuthUser, req);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "My profile is updated",
+      data: result,
+    });
+  }
+);
 
 export const userControllers = {
   createAdmin,
@@ -77,4 +92,5 @@ export const userControllers = {
   getAllFromDB,
   changeProfileStatus,
   getMyProfile,
+  updateMyProfile,
 };
