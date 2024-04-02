@@ -17,7 +17,37 @@ const getAllDoctorFromDb = CatchAsync(async (req, res) => {
     data: result,
   });
 });
+const getASingleDoctor = CatchAsync(async (req, res) => {
+  const result = await DoctorService.getASingleDoctor(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor Retrieved Successfully",
+    data: result,
+  });
+});
+const deleteADoctor = CatchAsync(async (req, res) => {
+  await DoctorService.deleteADoctor(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor Deleted Successfully",
+    data: null,
+  });
+});
+const softDeleteDoctor = CatchAsync(async (req, res) => {
+  await DoctorService.softDeleteDoctor(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor Deleted Successfully",
+    data: null,
+  });
+});
 
 export const DoctorController = {
   getAllDoctorFromDb,
+  getASingleDoctor,
+  deleteADoctor,
+  softDeleteDoctor,
 };

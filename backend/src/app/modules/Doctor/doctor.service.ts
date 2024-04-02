@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import prisma from "../../../Shared/prisma";
 import { paginationHelper } from "../../../healpers/paginationHelper";
 import { IPaginationOptions } from "../../interface/pagination";
@@ -84,6 +84,68 @@ const getAllDoctorFromDb = async (
     data: result,
   };
 };
+
+const getASingleDoctor = async (id: string): Promise<Doctor | null> => {
+  const result = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
+  });
+  return result;
+};
+const deleteADoctor = async (id: string): Promise<Doctor> => {
+  return await prisma.$transaction(async (transactionClient) => {
+    const deleteDoctor = await transactionClient.doctor.delete({
+      where: {
+        id,
+      },
+    });
+
+    await transactionClient.user.delete({
+      where: {
+        email: deleteDoctor.email,
+      },
+    });
+
+    return deleteDoctor;
+  });
+};
+
+const softDeleteDoctor = async (id: string) => {
+  return await prisma.$transaction(async (transactionClient) => {
+    const deleteDoctor = await transactionClient.doctor.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await transactionClient.user.update({
+      where: {
+        email: deleteDoctor.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deleteDoctor;
+  });
+};
+
 export const DoctorService = {
   getAllDoctorFromDb,
+  getASingleDoctor,
+  deleteADoctor,
+  softDeleteDoctor
 };
