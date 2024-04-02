@@ -138,12 +138,23 @@ const updateADoctor = async (id: string, payload: any) => {
         (specialty) => !specialty.isDeleted
       );
       for (const specialty of createSpecialtiesIds) {
-        await transactionClient.doctorSpecialties.create({
-          data: {
-            doctorId: doctorInfo.id,
-            specialtiesId: specialty.specialtiesId,
-          },
-        });
+        // Check if the entry already exists before creating
+        const existingEntry =
+          await transactionClient.doctorSpecialties.findFirst({
+            where: {
+              doctorId: doctorInfo.id,
+              specialtiesId: specialty.specialtiesId,
+            },
+          });
+
+        if (!existingEntry) {
+          await transactionClient.doctorSpecialties.create({
+            data: {
+              doctorId: doctorInfo.id,
+              specialtiesId: specialty.specialtiesId,
+            },
+          });
+        }
       }
     }
   });
