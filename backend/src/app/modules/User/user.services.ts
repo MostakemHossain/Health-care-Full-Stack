@@ -11,10 +11,10 @@ import { Request } from "express";
 import prisma from "../../../Shared/prisma";
 import { fileUploader } from "../../../healpers/fileUploader";
 import { paginationHelper } from "../../../healpers/paginationHelper";
+import { IAuthUser } from "../../interface/common";
 import { IFile } from "../../interface/file";
 import { IPaginationOptions } from "../../interface/pagination";
 import { userSearchAbleFields } from "./user.constant";
-import { IAuthUser } from "../../interface/common";
 
 const createAdmin = async (payload: Request): Promise<Admin> => {
   const file = payload.file as IFile;
@@ -74,7 +74,6 @@ const createDoctor = async (payload: Request): Promise<Doctor> => {
 };
 const createPatient = async (payload: Request): Promise<Patient> => {
   const file = payload.file as IFile;
-  console.log(file);
 
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
@@ -230,7 +229,7 @@ const getMyProfile = async (user: IAuthUser) => {
   return { ...userInfo, ...profileInfo };
 };
 
-const updateMyProfile = async (user:IAuthUser, req: Request) => {
+const updateMyProfile = async (user: IAuthUser, req: Request) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
       email: user?.email,
