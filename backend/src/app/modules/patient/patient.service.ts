@@ -135,7 +135,7 @@ const patientDataUpdate = async (
   return responseData;
 };
 
-const deletePatient = async (id: string) => {
+const deletePatient = async (id: string): Promise<Patient | null> => {
   const result = await prisma.$transaction(async (transactionClient) => {
     {
       await transactionClient.patientHealthData.delete({
@@ -165,7 +165,7 @@ const deletePatient = async (id: string) => {
   });
   return result;
 };
-const softDeletePatient = async (id: string) => {
+const softDeletePatient = async (id: string): Promise<Patient | null> => {
   console.log(id);
   return await prisma.$transaction(async (transactionClient) => {
     {
