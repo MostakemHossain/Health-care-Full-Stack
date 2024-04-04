@@ -94,7 +94,7 @@ const patientDataUpdate = async (
   });
   const result = await prisma.$transaction(async (transactionClient) => {
     //updated patient data
-    const updatedPatient = await transactionClient.patient.update({
+    await transactionClient.patient.update({
       where: {
         id,
       },
@@ -107,7 +107,7 @@ const patientDataUpdate = async (
 
     // create or update patient health data
     if (patientHealthData) {
-      const healthData = await transactionClient.patientHealthData.upsert({
+      await transactionClient.patientHealthData.upsert({
         where: {
           patientId: patientInfo.id,
         },
@@ -117,7 +117,7 @@ const patientDataUpdate = async (
     }
     //  create or update medical report
     if (medicalReport) {
-      const medicalData = await transactionClient.medicalReport.create({
+      await transactionClient.medicalReport.create({
         data: { ...medicalReport, patientId: patientInfo.id },
       });
     }
@@ -134,8 +134,40 @@ const patientDataUpdate = async (
 
   return responseData;
 };
+
+const deletePatient = async (id: string) => {
+  const result = await prisma.$transaction(async (transactionClient) => {
+    {
+      await transactionClient.patientHealthData.delete({
+        where: {
+          patientId: id,
+        },
+      });
+      await transactionClient.medicalReport.deleteMany({
+        where: {
+          patientId: id,
+        },
+      });
+
+      const deletedPatient = await transactionClient.patient.delete({
+        where: {
+          id: id,
+        },
+      });
+
+      await transactionClient.user.delete({
+        where: {
+          email: deletedPatient.email,
+        },
+      });
+      return deletedPatient;
+    }
+  });
+  return result;
+};
 export const patientService = {
   getAllPatient,
   getPatientById,
   patientDataUpdate,
+  deletePatient,
 };
