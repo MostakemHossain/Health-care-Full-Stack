@@ -81,6 +81,7 @@ model Patient {
   user              User               @relation(references: [email], fields: [email])
   patientHealthData PatientHealthData?
   medicalReport     MedicalReport[]
+
   @@map("patients")
 }
 
@@ -109,19 +110,19 @@ model PatientHealthData {
   patient             Patient       @relation(fields: [patientId], references: [id])
   gender              Gender
   dateOfBirth         String
-  bloodGroup          BloodGroup
-  hasAllergies        Boolean
-  hasDiabetes         Boolean
+  bloodGroup          BloodGroup?
+  hasAllergies        Boolean?      @default(false)
+  hasDiabetes         Boolean?      @default(false)
   height              String
   weight              String
-  smokingStatus       Boolean
-  dietaryPreferences  String
-  pregnancyStatus     Boolean
-  mentalHealthHistory String
-  immunizationStatus  String
-  hasPastSurgeries    Boolean
-  recentAnxiety       Boolean
-  recentDepression    Boolean
+  smokingStatus       Boolean?      @default(false)
+  dietaryPreferences  String?
+  pregnancyStatus     Boolean?      @default(false)
+  mentalHealthHistory String?
+  immunizationStatus  String?
+  hasPastSurgeries    Boolean?      @default(false)
+  recentAnxiety       Boolean?      @default(false)
+  recentDepression    Boolean?      @default(false)
   maritalStatus       MaritalStatus
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
