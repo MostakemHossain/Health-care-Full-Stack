@@ -12,12 +12,22 @@ const getAllPatient = CatchAsync(async (req: Request, res: Response) => {
   const result = await patientService.getAllPatient(filters, options);
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "Retrieved All  Patients Successfully",
+    data: result,
+  });
+});
+const getPatientById = CatchAsync(async (req: Request, res: Response) => {
+  const result = await patientService.getPatientById(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Retrieved   Patient Successfully",
     data: result,
   });
 });
 
 export const patientController = {
   getAllPatient,
+  getPatientById,
 };
