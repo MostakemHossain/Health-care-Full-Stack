@@ -45,8 +45,12 @@ const getMySchedule = CatchAsync(
 const deleteMySchedule = CatchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user;
+    const { scheduleId } = req.params;
 
-    const result = await doctorScheduleService.deleteMySchedule();
+    const result = await doctorScheduleService.deleteMySchedule(
+      user as IAuthUser,
+      scheduleId
+    );
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,

@@ -70,6 +70,7 @@ const getAllBookingSchedule = async (
   const { startDate, endDate, ...filterData } = filters;
   const { limit, page, skip } = paginationHelper.calculatePagination(options);
   const andConditions: Prisma.ScheduleWhereInput[] = [];
+  console.log(startDate, endDate);
 
   if (startDate && endDate) {
     andConditions.push({
