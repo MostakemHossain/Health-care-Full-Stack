@@ -5,6 +5,7 @@ import pick from "../../../Shared/pick";
 import sendResponse from "../../../healpers/sendResponse";
 import { IAuthUser } from "../../interface/common";
 import { doctorScheduleService } from "./doctorSchedule.service";
+import { scheduleFilterableFields } from "./doctorSchedule.constant";
 
 const bookingADoctorSchedule = CatchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -61,8 +62,22 @@ const deleteMySchedule = CatchAsync(
   }
 );
 
+const getAllFromDB = CatchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, scheduleFilterableFields);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+  const result = await doctorScheduleService.getAllFromDB(filters, options);
+  sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Doctor Schedule retrieval successfully',
+      meta: result.meta,
+      data: result.data,
+  });
+});
+
 export const doctorScheduleController = {
   bookingADoctorSchedule,
   getMySchedule,
   deleteMySchedule,
+  getAllFromDB
 };

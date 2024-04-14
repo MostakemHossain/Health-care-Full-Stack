@@ -4,6 +4,14 @@ import auth from "../../middlewares/auth";
 import { doctorScheduleController } from "./doctorSchedule.controller";
 
 const router = express.Router();
+
+router.get(
+  '/',
+  // auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  doctorScheduleController.getAllFromDB
+);
+
+
 router.get(
   "/my-schedule",
   auth(UserRole.DOCTOR),
