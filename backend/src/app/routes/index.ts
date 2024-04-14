@@ -1,5 +1,6 @@
 import express from "express";
 import { AdminRoutes } from "../modules/Admin/admin.routes";
+import { AppointmentRoutes } from "../modules/Appointment/appointment.routes";
 import { AutRoutes } from "../modules/Auth/auth.routes";
 import { DoctorRoutes } from "../modules/Doctor/doctor.route";
 import { DoctorSchedules } from "../modules/DoctorSchedule/doctorSchedule.routes";
@@ -41,6 +42,10 @@ const moduleRoutes = [
   {
     path: "/doctor-schedule",
     route: DoctorSchedules,
+  },
+  {
+    path: "/appointment",
+    route: AppointmentRoutes,
   },
 ];
 
