@@ -38,7 +38,7 @@ const createAppointment = async (user: IAuthUser, payload: Appointment) => {
       },
     });
 
-     await transactionClient.doctorSchedules.update({
+    await transactionClient.doctorSchedules.update({
       where: {
         doctorId_scheduleId: {
           doctorId: doctorData.id,
@@ -48,6 +48,26 @@ const createAppointment = async (user: IAuthUser, payload: Appointment) => {
       data: {
         isBooked: true,
         appointmentId: appointmentData.id,
+      },
+    });
+    const today = new Date();
+    const transactionId =
+      "WellnessWave" +
+      today.getFullYear() +
+      "-" +
+      today.getMonth() +
+      "-" +
+      today.getDate() +
+      "-" +
+      today.getHours() +
+      "" +
+      today.getMinutes();
+    console.log(transactionId);
+    await transactionClient.payment.create({
+      data: {
+        appointmentId: appointmentData.id,
+        amount: doctorData.appointmentFee,
+        transactionId: transactionId,
       },
     });
     return appointmentData;
