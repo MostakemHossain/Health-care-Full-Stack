@@ -7,7 +7,6 @@ import { paymentService } from "./payment.service";
 const initPayment = CatchAsync(async (req: Request, res: Response) => {
   const { appointmentId } = req.params;
   const result = await paymentService.intiPayment(appointmentId);
-  console.log(result);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -15,7 +14,18 @@ const initPayment = CatchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const validatePayment = CatchAsync(async (req: Request, res: Response) => {
+  const { appointmentId } = req.params;
+  const result = await paymentService.validatePayment(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "Validate Payment Successfully",
+    data: result,
+  });
+});
 
 export const PaymentController = {
   initPayment,
+  validatePayment,
 };

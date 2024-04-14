@@ -1,3 +1,4 @@
+import { PaymentStatus } from "@prisma/client";
 import prisma from "../../../Shared/prisma";
 import { SSLService } from "../SSL/ssl.service";
 const intiPayment = async (id: string) => {
@@ -23,11 +24,47 @@ const intiPayment = async (id: string) => {
   };
 
   const result = await SSLService.initPayment(initPaymentData);
-  console.log(result.GatewayPageURL);
   return {
     payment: result.GatewayPageURL,
   };
 };
+
+const validatePayment = async (payload: any) => {
+  if (!payload || !payload.status || !(payload.status === "VALID")) {
+    return {
+      message: "Payment Failedt",
+    };
+  }
+  const response = await SSLService.validatePayment(payload);
+  if (response.status !== "VALID") {
+    return {
+      message: "Payment Failed",
+    };
+  }
+  await prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.update({
+      where: {
+        transactionId: response.tran_id,
+      },
+      data: {
+        status: PaymentStatus.PAID,
+        paymentGatwayData: response,
+      },
+    });
+    await tx.appointment.update({
+      where: {
+        id: payment.appointmentId,
+      },
+      data: {
+        paymentStatus: PaymentStatus.PAID,
+      },
+    });
+  });
+  return {
+    message: "Payment success",
+  };
+};
 export const paymentService = {
   intiPayment,
+  validatePayment,
 };
