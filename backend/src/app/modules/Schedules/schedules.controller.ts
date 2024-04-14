@@ -35,8 +35,38 @@ const getAllBookingSchedule = CatchAsync(
     return result;
   }
 );
+const getSingleBookingSchedule = CatchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const result = await scheduleService.getSingleSchedule(
+      req.params.scheduleId
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Schedule is fetched Successfully",
+      data: result,
+    });
+    return result;
+  }
+);
+const deleteBookingSchedule = CatchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const result = await scheduleService.deleteSchedule(
+      req.params.scheduleId
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Schedule is deleted Successfully",
+      data: result,
+    });
+    return result;
+  }
+);
 
 export const scheduleController = {
   createSchedule,
   getAllBookingSchedule,
+  getSingleBookingSchedule,
+  deleteBookingSchedule
 };
