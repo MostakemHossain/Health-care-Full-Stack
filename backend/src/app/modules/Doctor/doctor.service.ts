@@ -62,7 +62,7 @@ const getAllDoctorFromDb = async (
     orderBy:
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
-        : { createdAt: "desc" },
+        : { averageRating: "desc" },
     include: {
       doctorSpecialties: {
         include: {
@@ -122,7 +122,7 @@ const updateADoctor = async (id: string, payload: any) => {
     if (specialties && specialties.length > 0) {
       // delete specialties
       const deleteSpecialtiesIds = specialties.filter(
-        (specialty) => specialty.isDeleted
+        (specialty: any) => specialty.isDeleted
       );
       for (const specialty of deleteSpecialtiesIds) {
         await transactionClient.doctorSpecialties.deleteMany({
@@ -135,7 +135,7 @@ const updateADoctor = async (id: string, payload: any) => {
 
       // create specialties
       const createSpecialtiesIds = specialties.filter(
-        (specialty) => !specialty.isDeleted
+        (specialty: any) => !specialty.isDeleted
       );
       for (const specialty of createSpecialtiesIds) {
         // Check if the entry already exists before creating
