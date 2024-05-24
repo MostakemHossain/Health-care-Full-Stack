@@ -28,11 +28,12 @@ const getSingleSpeciaities = async (id: string) => {
   return result;
 };
 const deleteSpeciaities = async (id: string) => {
-  await prisma.specialties.delete({
+  const result = await prisma.specialties.delete({
     where: {
       id,
     },
   });
+  return result;
 };
 
 export const SpecialtiesService = {

@@ -19,7 +19,7 @@ router.get(
 
 router.post(
   "/create-admin",
-  auth(UserRole.ADMIN, UserRole.ADMIN),
+  // auth(UserRole.ADMIN, UserRole.ADMIN),
   fileUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = userValidation.createAdmin.parse(JSON.parse(req.body.data));
@@ -28,7 +28,7 @@ router.post(
 );
 router.post(
   "/create-doctor",
-  auth(UserRole.ADMIN, UserRole.ADMIN),
+  // auth(UserRole.ADMIN, UserRole.ADMIN),
   fileUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = userValidation.createDoctor.parse(JSON.parse(req.body.data));

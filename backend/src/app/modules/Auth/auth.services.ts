@@ -25,7 +25,7 @@ const loginUser = async (payload: IUserLogin) => {
     {
       email: userData.email,
       role: userData.role,
-    },
+  },
     config.jwt.jwt_access_token_serect as string,
     config.jwt.jwt_access_token_expires_in as string
   );

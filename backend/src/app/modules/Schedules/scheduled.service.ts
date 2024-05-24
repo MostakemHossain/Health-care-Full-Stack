@@ -6,17 +6,25 @@ import { IAuthUser } from "../../interface/common";
 import { IPaginationOptions } from "../../interface/pagination";
 import { IFilterRequest, ISchedule } from "./schedule.interface";
 
+const convertDateTime = async (date: Date) => {
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() + offset);
+};
+
 const createScheduleIntoDB = async (
   payload: ISchedule
 ): Promise<Schedule[]> => {
   const { startDate, endDate, startTime, endTime } = payload;
-  const IntervalTime = 30;
+
+  const interverlTime = 30;
+
   const schedules = [];
 
-  const currentDate = new Date(startDate); //start date
-  const lastDate = new Date(endDate); //end date
+  const currentDate = new Date(startDate); // start date
+  const lastDate = new Date(endDate); // end date
 
   while (currentDate <= lastDate) {
+    // 09:30  ---> ['09', '30']
     const startDateTime = new Date(
       addMinutes(
         addHours(
@@ -38,16 +46,26 @@ const createScheduleIntoDB = async (
     );
 
     while (startDateTime < endDateTime) {
+      // const scheduleData = {
+      //     startDateTime: startDateTime,
+      //     endDateTime: addMinutes(startDateTime, interverlTime)
+      // }
+
+      const s = await convertDateTime(startDateTime);
+      const e = await convertDateTime(addMinutes(startDateTime, interverlTime));
+
       const scheduleData = {
-        startDateTime: startDateTime,
-        endDateTime: addMinutes(startDateTime, IntervalTime),
+        startDate: s,
+        endDate: e,
       };
+
       const existingSchedule = await prisma.schedule.findFirst({
         where: {
-          startDateTime: scheduleData.startDateTime,
-          endDateTime: scheduleData.endDateTime,
+          startDate: scheduleData.startDate,
+          endDate: scheduleData.endDate,
         },
       });
+
       if (!existingSchedule) {
         const result = await prisma.schedule.create({
           data: scheduleData,
@@ -55,10 +73,12 @@ const createScheduleIntoDB = async (
         schedules.push(result);
       }
 
-      startDateTime.setMinutes(startDateTime.getMinutes() + IntervalTime);
+      startDateTime.setMinutes(startDateTime.getMinutes() + interverlTime);
     }
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
+
   return schedules;
 };
 
@@ -67,25 +87,38 @@ const getAllBookingSchedule = async (
   options: IPaginationOptions,
   user: IAuthUser
 ) => {
-  const { startDate, endDate, ...filterData } = filters;
   const { limit, page, skip } = paginationHelper.calculatePagination(options);
-  const andConditions: Prisma.ScheduleWhereInput[] = [];
-  console.log(startDate, endDate);
+  const { startDate, endDate, ...filterData } = filters; // Extracting startDate and endDate from filters
 
+  const andConditions = [];
+
+  // Adding date filtering conditions if startDate and endDate are provided
   if (startDate && endDate) {
     andConditions.push({
       AND: [
         {
-          startDateTime: {
-            gte: startDate,
+          startDate: {
+            gte: startDate, // Greater than or equal to startDate
           },
         },
         {
-          endDateTime: {
-            lte: endDate,
+          endDate: {
+            lte: endDate, // Less than or equal to endDate
           },
         },
       ],
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => {
+        return {
+          [key]: {
+            equals: (filterData as any)[key],
+          },
+        };
+      }),
     });
   }
 
@@ -167,5 +200,5 @@ export const scheduleService = {
   createScheduleIntoDB,
   getAllBookingSchedule,
   getSingleSchedule,
-  deleteSchedule
+  deleteSchedule,
 };
